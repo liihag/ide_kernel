@@ -27,13 +27,26 @@ def parse_cmd_file(out_dir, cmdfile_path):
         cmdfile_content = cmdfile.read()
 
     commands = { match.group(1): match.group(2) for match in CMD_VAR_RE.finditer(cmdfile_content) }
+#sources 是一个dict其内容类似如下：
+#{'drivers/gpu/drm/nouveau/dispnv50/head917d.o': '/work/android_x86/kernel/drivers/gpu/drm/nouveau/dispnv50/head917d.c'} 
     sources = { match.group(1): match.group(2) for match in SOURCE_VAR_RE.finditer(cmdfile_content) }
+    # print(sources)
+
+
+#source_arch/x86/crypto/chacha_glue.o := /work/android_x86/kernel/arch/x86/crypto/chacha_glue.c
+    for o_file_name, source in sources.items():
+        commands[o_file_name] = commands[o_file_name].replace("-MD,","-MD,"+out_dir+'/')
+        commands[o_file_name] = commands[o_file_name].replace("-I./","-I"+out_dir+'/')
+        commands[o_file_name] = commands[o_file_name].replace("-o ","-o "+out_dir+'/')      
+        if not source.startswith('/'):
+            sources[o_file_name]=out_dir+"/"+source
+
 
     return [{
-            'directory': out_dir,
+            'directory': ".",
             'command': commands[o_file_name],
             'file': source,
-            'output': o_file_name
+            'output': out_dir+'/'+o_file_name
         } for o_file_name, source in sources.items()]
 
 

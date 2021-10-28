@@ -1,4 +1,11 @@
 #!/bin/bash
+echo -e "****\n注意: \n执行完该脚本后，必须通过ide打开realpath的绝对路径才行，否则会有链接错误问题。\n   如果你需要解决这个问题，用脚本后面注释的sed指令即可\n****"
+
+
+
+
+
+
 echo "开始生成"
 DIR="$( cd "$( dirname "$0"  )" && pwd  )"
 CURRENT_DIR=`pwd`
@@ -32,23 +39,24 @@ if [ -z $target_out ]; then
     
 fi
 
+#realpath 指的是不包含软链接绝对地址
+realpath=`python -c "import os; print(os.path.realpath('${CURRENT_DIR}/${target_out}'))"`
+
+#realpath 指的是包含软链接绝对地址
+abspath=`python -c "import os; print(os.path.abspath('${CURRENT_DIR}/${target_out}'))"`
+
+echo $realpath
+echo $abspath
+
 
 
 python $DIR/generate_compdb.py  -O $target_out
 
-#fix the path of compile_commands.json
-#sed  -i 's/\/work\//\/home\/ecarx\/work\//g' compile_commands.json
-#sed  -i 's/\/home\/ecarx\/home\/ecarx/\/home\/ecarx/g' compile_commands.json
-#sed  -i 's/\/media\/ecarx\/yly/\/home\/ecarx\/work\/nvme/g' compile_commands.json
-#sed  -i 's/\/media\/ecarx\/yly/\/home\/ecarx\/work\/nvme/g' compile_commands.json
+#############用下面的三条指令来更换你的路径
+# sed_src="/media/ecarx/yly/android_x86"
+# sed_tar="/home/ecarx/work/nvme/android_x86"
+# sed -i "s|$sed_src|$sed_tar|g" compile_commands.json
 
-#../../../../../../
-sed  -i 's/\/work\/android\_x86\/kernel\//\.\//g' compile_commands.json
-sed  -i 's/\/work\/android\_x86\//\/data2\/liyuanye\/android\_x86\//g' compile_commands.json
-#sed  -i 's/\/work\/android\_x86\//\/data2\/liyuanye\/android\_x86\//g' compile_commands.json
-
-
-#sed  -i 's/test/$target_out/g' compile_commands.json
 
 #$DIR/kernel-grok/generate_cmake -d $CURRENT_DIR
 #echo -e "SET(CMAKE_C_COMPILER "gcc")\ninclude_directories(".")\ninclude_directories("./include")" >> CMakeLists.txt

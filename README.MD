@@ -19,7 +19,14 @@ compile_commands 语法：https://clang.llvm.org/docs/JSONCompilationDatabase.ht
 
 * * *
 
-# 26/10/2021 15:13 上面的废弃
+# 20211029 有一次较大更新 notice:当前仍然有bug
+## 需要注意以下bug： 
+1 当前vscdode 用快速打开的文件，跳转函数时，会跳转到绝对目录的同一个文件，但是在另一个窗口打开。 不过不影响跳转。
+2 调用generate.sh脚本后，需要通过modify_dir.sh将json文件中所有的目录改成vscode打开时候对应目录（可以在vscode终端中pwd），否则会无法跳转。
+
+
+
+
 
 ## 主要原理
 
